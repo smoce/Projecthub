@@ -18,17 +18,24 @@ def display_projects(projects):
 
 def add_project(projects):
     new_project = input("Nombre del proyecto: ")
-    if len(new_project.strip()) == 0:
+    p = new_project.strip()
+    if len(p) == 0:
         print("No project introduced.")
     else:
+        projects.append(new_project)
         with open("projects.json","w", encoding="utf-8") as f:
             json.dump(projects, f, ensure_ascii=False, indent=4)
-        projects.append(new_project)
         print("Proyecto añadido correctamente.")
 
 def main():
 
-    with open("projects.json","r") as f:
+    try:
+        with open("projects.json", "x", encoding="utf-8") as f:
+            f.write("[]")
+    except FileExistsError:
+        pass
+
+    with open("projects.json","r", encoding="utf-8") as f:
         projects = json.load(f)
 
     while True:
