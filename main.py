@@ -2,9 +2,9 @@ import json
 
 def display_menu():
     print("\n=== PROJECTHUB ===")
-    print("1. Mostrar proyectos")
-    print("2. Añadir proyecto")
-    print("3. Salir")
+    print("1. Display projects")
+    print("2. Add projects")
+    print("3. Exit")
 
 def display_projects(projects):
     print("\n=== PROJECTHUB ===")
@@ -12,20 +12,30 @@ def display_projects(projects):
     if len(projects) == 0:
         print("No projects.")
     else:
-        print("Mis proyectos:")
+        print("My projects:")
         for project in projects:
             print("- " + project)
 
-def add_project(projects):
-    new_project = input("Nombre del proyecto: ")
-    p = new_project.strip()
-    if len(p) == 0:
-        print("No project introduced.")
+def is_valid_project_name(project):
+    valid = False
+    if not isinstance(project, str):
+        return valid
     else:
-        projects.append(new_project)
+        p = project.strip()
+        if len(p) > 0:
+            valid = True
+        return valid
+
+def add_project(projects):
+    new_project = input("Project name: ")
+    if is_valid_project_name(new_project):
+        p = new_project.strip()
+        projects.append(p)
         with open("projects.json","w", encoding="utf-8") as f:
             json.dump(projects, f, ensure_ascii=False, indent=4)
-        print("Proyecto añadido correctamente.")
+        print("Project added succesfully.")
+    else:
+        print("Invalid project name.")
 
 def main():
 
@@ -40,7 +50,7 @@ def main():
 
     while True:
         display_menu()
-        option = input("\nSelecciona una opción: ")
+        option = input("\nChoose an option: ")
         match option:
             case "1":
                 display_projects(projects)
@@ -49,6 +59,7 @@ def main():
             case "3":
                 break
             case _:
-                print("Opción no válida.")
+                print("Invalid option.")
         
-main()
+if __name__ == "__main__":
+    main()
