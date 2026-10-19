@@ -1,7 +1,7 @@
 import unittest, json
 
 from unittest.mock import patch, mock_open
-from main import is_valid_project_name, add_project, save_projects
+from main import is_valid_project_name, add_project, save_projects, load_projects
 
 class TestProjectName(unittest.TestCase):
     def test_valid_project_name(self):
@@ -68,3 +68,24 @@ class TestAddProject(unittest.TestCase):
             json.loads(written_data),
             projects
         )
+
+class TestLoadProject(unittest.TestCase):
+    def test_load_projects(self):
+        projects = ["Aprender Python", "Crear ProjectHub"]
+        mocked_file = mock_open(read_data='["Aprender Python", "Crear ProjectHub"]')
+
+        with patch("builtins.open",side_effect=[FileExistsError, mocked_file.return_value]):
+            loaded_projects = load_projects()
+
+        self.assertEqual(
+            loaded_projects,
+            projects
+        )
+
+    def test_load_projects_when_file_does_not_exist(self):
+        mocked_file = mock_open(read_data="[]")
+
+        with patch("builtins.open", mocked_file):
+            loaded_projects = load_projects()
+
+        self.assertEqual(loaded_projects, [])

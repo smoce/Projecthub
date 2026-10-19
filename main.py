@@ -40,8 +40,7 @@ def add_project(projects):
     else:
         print("Invalid project name.")
 
-def main():
-
+def load_projects():
     try:
         with open("projects.json", "x", encoding="utf-8") as f:
             f.write("[]")
@@ -50,6 +49,12 @@ def main():
 
     with open("projects.json","r", encoding="utf-8") as f:
         projects = json.load(f)
+
+    return projects
+
+def main():
+
+    projects = load_projects()
 
     while True:
         display_menu()
