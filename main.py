@@ -47,10 +47,12 @@ def load_projects():
     except FileExistsError:
         pass
 
-    with open("projects.json","r", encoding="utf-8") as f:
-        projects = json.load(f)
-
-    return projects
+    try:
+        with open("projects.json","r", encoding="utf-8") as f:
+            projects = json.load(f)
+        return projects
+    except json.JSONDecodeError:
+        print("Error: projects.json contains invalid JSON.")
 
 def main():
 

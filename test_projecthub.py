@@ -89,3 +89,11 @@ class TestLoadProject(unittest.TestCase):
             loaded_projects = load_projects()
 
         self.assertEqual(loaded_projects, [])
+
+    def test_invalid_file_type(self):
+        mocked_file = mock_open(read_data="Esto no es un JSON")
+        
+        with patch("builtins.open",side_effect=[FileExistsError, mocked_file.return_value]):
+            loaded_projects = load_projects()
+
+        self.assertIsNone(loaded_projects)
