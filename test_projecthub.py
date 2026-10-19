@@ -1,7 +1,7 @@
-import unittest
+import unittest, json
 
 from unittest.mock import patch, mock_open
-from main import is_valid_project_name, add_project
+from main import is_valid_project_name, add_project, save_projects
 
 class TestProjectName(unittest.TestCase):
     def test_valid_project_name(self):
@@ -35,3 +35,36 @@ class TestAddProject(unittest.TestCase):
             add_project(projects)
         
         self.assertEqual(projects,[])
+
+    def test_add_project_saves_to_json(self):
+        projects = []
+        mocked_file = mock_open()
+
+        with patch("builtins.input", return_value="Aprender Python"), \
+            patch("builtins.open", mocked_file):
+            add_project(projects)
+
+        written_data = "".join(
+            call.args[0] for call in mocked_file().write.call_args_list
+        )
+
+        self.assertEqual(
+            json.loads(written_data),
+            ["Aprender Python"]
+        )
+
+    def test_save_projects(self):
+        projects = ["Aprender Python", "Crear ProjectHub"]
+        mocked_file = mock_open()
+
+        with patch("builtins.open", mocked_file):
+            save_projects(projects)
+
+        written_data = "".join(
+            call.args[0] for call in mocked_file().write.call_args_list
+        )
+
+        self.assertEqual(
+            json.loads(written_data),
+            projects
+        )

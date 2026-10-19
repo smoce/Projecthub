@@ -26,13 +26,16 @@ def is_valid_project_name(project):
             valid = True
         return valid
 
+def save_projects(projects):
+    with open("projects.json","w", encoding="utf-8") as f:
+        json.dump(projects, f, ensure_ascii=False, indent=4)
+
 def add_project(projects):
     new_project = input("Project name: ")
     if is_valid_project_name(new_project):
         p = new_project.strip()
         projects.append(p)
-        with open("projects.json","w", encoding="utf-8") as f:
-            json.dump(projects, f, ensure_ascii=False, indent=4)
+        save_projects(projects)
         print("Project added succesfully.")
     else:
         print("Invalid project name.")
