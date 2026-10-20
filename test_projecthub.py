@@ -1,7 +1,7 @@
 import unittest, json
 
 from unittest.mock import patch, mock_open
-from main import is_valid_project_name, add_project, save_projects, load_projects
+from main import is_valid_project_name, add_project, save_projects, load_projects, main
 
 class TestProjectName(unittest.TestCase):
     def test_valid_project_name(self):
@@ -97,3 +97,10 @@ class TestLoadProject(unittest.TestCase):
             loaded_projects = load_projects()
 
         self.assertIsNone(loaded_projects)
+
+    def test_main_stops_when_projects_cannot_load(self):
+
+        with patch("main.load_projects", return_value = None), \
+        patch("main.display_menu") as mocked_menu:
+            main()
+            mocked_menu.assert_not_called()

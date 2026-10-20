@@ -58,6 +58,10 @@ def main():
 
     projects = load_projects()
 
+    if projects is None:
+        print("Unable to load projects. Exiting program.")
+        return
+
     while True:
         display_menu()
         option = input("\nChoose an option: ")
