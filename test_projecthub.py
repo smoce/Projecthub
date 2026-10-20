@@ -1,7 +1,7 @@
 import unittest, json
 
 from unittest.mock import patch, mock_open
-from main import is_valid_project_name, add_project, save_projects, load_projects, main
+from main import is_valid_project_name, add_project, save_projects, load_projects, delete_project, main
 
 class TestProjectName(unittest.TestCase):
     def test_valid_project_name(self):
@@ -120,3 +120,58 @@ class TestLoadProject(unittest.TestCase):
             loaded_projects = load_projects()
 
         self.assertIsNone(loaded_projects)
+
+class TestDeleteProject(unittest.TestCase):
+
+    def test_delete_project_confirmed(self):
+        projects = ["Proyecto 1", "Proyecto 2", "Proyecto 3"]
+        updated_projects = ["Proyecto 1", "Proyecto 3"]
+
+        with patch("builtins.input", side_effect=["2","y"]), \
+            patch("main.save_projects") as mocked_save:
+            delete_project(projects)
+            mocked_save.assert_called_once_with(updated_projects)
+
+        self.assertEqual(projects,updated_projects)
+
+    def test_delete_project_cancelled(self):
+        projects = ["Proyecto 1", "Proyecto 2", "Proyecto 3"]
+        updated_projects = ["Proyecto 1", "Proyecto 2", "Proyecto 3"]
+
+        with patch("builtins.input", side_effect=["2","n"]), \
+            patch("main.save_projects"): \
+            delete_project(projects)
+
+        self.assertEqual(projects,updated_projects)
+
+    def test_delete_project_invalid_number(self):
+        projects = ["Proyecto 1", "Proyecto 2", "Proyecto 3"]
+        updated_projects = ["Proyecto 1", "Proyecto 2", "Proyecto 3"]
+
+        with patch("builtins.input", side_effect=["8"]), \
+            patch("main.save_projects") as mocked_save:
+            delete_project(projects)
+            mocked_save.assert_not_called()
+
+        self.assertEqual(projects,updated_projects)
+
+    def test_delete_project_non_numeric_input(self):
+        projects = ["Proyecto 1", "Proyecto 2", "Proyecto 3"]
+        updated_projects = ["Proyecto 1", "Proyecto 2", "Proyecto 3"]
+        
+        with patch("builtins.input", side_effect=["abc"]), \
+            patch("main.save_projects") as mocked_save:
+            delete_project(projects)
+            mocked_save.assert_not_called()
+
+        self.assertEqual(projects,updated_projects)
+
+    def test_delete_project_empty_list(self):
+        projects = []
+
+        with patch("builtins.input", side_effect=["2"]), \
+            patch("main.save_projects") as mocked_save:
+            delete_project(projects)
+            mocked_save.assert_not_called()
+    
+        self.assertEqual(projects,[])

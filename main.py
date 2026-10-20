@@ -2,9 +2,10 @@ import json
 
 def display_menu():
     print("\n=== PROJECTHUB ===")
-    print("1. Display projects")
-    print("2. Add projects")
-    print("3. Exit")
+    print("1 Display projects")
+    print("2 Add projects")
+    print("3 Delete a project")
+    print("4 Exit")
 
 def display_projects(projects):
     print("\n=== PROJECTHUB ===")
@@ -60,6 +61,34 @@ def load_projects():
     except json.JSONDecodeError:
         return None
 
+def delete_project(projects):
+    print("\nWhat project do you want to delete? (enter the number):")
+
+    if len(projects) == 0:
+        print("No projects to delete.")
+        return
+    else:
+        for index, project in enumerate(projects, start=1):
+            print(index, project)
+        
+        choice = input("Project number: ")
+
+        if choice.isdigit():
+            choice = int(choice)
+            if choice > len(projects) or choice <= 0:
+                print("Invalid project number.")
+            else:
+                print("\nDo you want to delete the project " + projects[choice-1] + "? (y/Y)")
+                confirmation = input()
+                if confirmation == "y" or confirmation == "Y":
+                    projects.pop(choice-1)
+                    save_projects(projects)
+                    print("Project deleted successfully.")
+                else:
+                    print("Aborting.")
+        else:
+            print("Invalid input.")
+
 def main():
 
     projects = load_projects()
@@ -77,6 +106,8 @@ def main():
             case "2":
                 add_project(projects)
             case "3":
+                delete_project(projects)
+            case "4":
                 break
             case _:
                 print("Invalid option.")
