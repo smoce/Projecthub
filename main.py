@@ -50,9 +50,15 @@ def load_projects():
     try:
         with open("projects.json","r", encoding="utf-8") as f:
             projects = json.load(f)
-        return projects
+            if not isinstance(projects,list):
+                return None
+            else:
+                for project in projects:
+                    if not is_valid_project_name(project):
+                        return None
+            return projects
     except json.JSONDecodeError:
-        print("Error: projects.json contains invalid JSON.")
+        return None
 
 def main():
 

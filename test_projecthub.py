@@ -104,3 +104,19 @@ class TestLoadProject(unittest.TestCase):
         patch("main.display_menu") as mocked_menu:
             main()
             mocked_menu.assert_not_called()
+
+    def test_load_projects_rejects_invalid_name(self):
+        mocked_file = mock_open(read_data='["Proyecto 1", 1234]')
+
+        with patch("builtins.open",side_effect=[FileExistsError, mocked_file.return_value]):
+            loaded_projects = load_projects()
+
+        self.assertIsNone(loaded_projects)
+
+    def test_valid_json_rejects_invalid_type(self):
+        mocked_file = mock_open(read_data='"Proyecto 1"')
+
+        with patch("builtins.open",side_effect=[FileExistsError, mocked_file.return_value]):
+            loaded_projects = load_projects()
+
+        self.assertIsNone(loaded_projects)
