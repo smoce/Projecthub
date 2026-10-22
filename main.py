@@ -5,7 +5,8 @@ def display_menu():
     print("1 Display projects")
     print("2 Add projects")
     print("3 Delete a project")
-    print("4 Exit")
+    print("4 Edit a project")
+    print("5 Exit")
 
 def display_projects(projects):
     print("\n=== PROJECTHUB ===")
@@ -89,6 +90,49 @@ def delete_project(projects):
         else:
             print("Invalid input.")
 
+def modify_project(projects):
+    print("\nWhat project do you want to modify? (enter the number):")
+
+    if len(projects) == 0:
+        print("No projects to modify.")
+        return
+    else:
+        for index, project in enumerate(projects, start=1):
+            print(index, project)
+
+        choice = input("Project number: ")
+        
+        if choice.isdigit():
+            choice = int(choice)
+            if choice > len(projects) or choice <= 0:
+                print("Invalid project number.")
+            else:
+                new_name = input("New project name: ").strip()
+                if is_valid_project_name(new_name):
+                    found = False
+                    for index, project in enumerate(projects, start=1):
+                        if index != choice and project == new_name:
+                            found = True
+                        elif project == new_name:
+                            print("\nSame project name.")
+                            return
+                    if found:
+                        print("\nProject '" + new_name + "' already exists.")
+                        return
+                    print("\nDo you want to modify the project '" + projects[choice-1] + "' and set it to '" + new_name + "'? (y/Y)")
+                    confirmation = input()
+                    if confirmation == "y" or confirmation == "Y":
+                        projects[choice-1] = new_name
+                        save_projects(projects)
+                        print("Project modified successfully.")
+                    else:
+                        print("Aborting.")
+                else:
+                    print("Invalid new project name.")
+        else:
+            print("Invalid input.")
+
+
 def main():
 
     projects = load_projects()
@@ -108,6 +152,8 @@ def main():
             case "3":
                 delete_project(projects)
             case "4":
+                modify_project(projects)
+            case "5":
                 break
             case _:
                 print("Invalid option.")

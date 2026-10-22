@@ -1,7 +1,7 @@
 import unittest, json
 
 from unittest.mock import patch, mock_open
-from main import is_valid_project_name, add_project, save_projects, load_projects, delete_project, main
+from main import is_valid_project_name, add_project, save_projects, load_projects, delete_project, modify_project, main
 
 class TestProjectName(unittest.TestCase):
     def test_valid_project_name(self):
@@ -174,4 +174,92 @@ class TestDeleteProject(unittest.TestCase):
             delete_project(projects)
             mocked_save.assert_not_called()
     
+        self.assertEqual(projects,[])
+
+class TestModifyProject(unittest.TestCase):
+
+    def test_modify_correct(self):
+        projects = ["Proyect A", "Proyect B"]
+        updated_projects = ["Proyect A", "Proyect C"]
+
+        with patch("builtins.input", side_effect=["2", "Proyect C", "y"]), \
+            patch("main.save_projects") as mocked_save:
+            modify_project(projects)
+            mocked_save.assert_called_once_with(updated_projects)
+
+        self.assertEqual(projects,updated_projects)
+
+    def test_modify_cancelled(self):
+        projects = ["Proyect A", "Proyect B"]
+        updated_projects = ["Proyect A", "Proyect B"]
+
+        with patch("builtins.input", side_effect=["2", "Proyect C", "n"]), \
+            patch("main.save_projects") as mocked_save:
+                modify_project(projects)
+                mocked_save.assert_not_called()
+
+        self.assertEqual(projects,updated_projects)
+
+    def test_modify_duplicate_name(self):
+        projects = ["Proyect A", "Proyect B"]
+        updated_projects = ["Proyect A", "Proyect B"]
+
+        with patch("builtins.input", side_effect=["1", "Proyect B"]), \
+            patch("main.save_projects") as mocked_save:
+            modify_project(projects)
+            mocked_save.assert_not_called()
+
+        self.assertEqual(projects,updated_projects)
+
+    def test_modify_same_name(self):
+        projects = ["Proyect A", "Proyect B"]
+        updated_projects = ["Proyect A", "Proyect B"]
+
+        with patch("builtins.input", side_effect=["1", "Proyect A"]), \
+            patch("main.save_projects") as mocked_save:
+            modify_project(projects)
+            mocked_save.assert_not_called()
+
+        self.assertEqual(projects,updated_projects)
+
+    def test_modify_invalid_input(self):
+        projects = ["Proyect A", "Proyect B"]
+        updated_projects = ["Proyect A", "Proyect B"]
+
+        with patch("builtins.input", side_effect=["abc"]), \
+            patch("main.save_projects") as mocked_save:
+            modify_project(projects)
+            mocked_save.assert_not_called()
+
+        self.assertEqual(projects,updated_projects)
+
+    def test_modify_invalid_number(self):
+        projects = ["Proyect A", "Proyect B"]
+        updated_projects = ["Proyect A", "Proyect B"]
+
+        with patch("builtins.input", side_effect=["69"]), \
+            patch("main.save_projects") as mocked_save:
+            modify_project(projects)
+            mocked_save.assert_not_called()
+
+        self.assertEqual(projects,updated_projects)
+
+    def test_modify_invalid_name(self):
+        projects = ["Proyect A", "Proyect B"]
+        updated_projects = ["Proyect A", "Proyect B"]
+
+        with patch("builtins.input", side_effect=["1", "   "]), \
+            patch("main.save_projects") as mocked_save:
+            modify_project(projects)
+            mocked_save.assert_not_called()
+
+        self.assertEqual(projects,updated_projects)
+
+    def test_modify_empty_list(self):
+        projects = []
+
+        with patch("main.save_projects") as mocked_save:
+            modify_project(projects)
+            mocked_save.assert_not_called()
+
         self.assertEqual(projects,[])
